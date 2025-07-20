@@ -32,14 +32,16 @@ Grocify's responsive design ensures a smooth experience across various devices, 
 <br /><br /><br />
 By presenting categories, shop items, and a powerful filtering system, Grocify aims to expedite the product discovery process. The Cart component allows users to manage selected items and proceed to checkout seamlessly, enhancing the overall shopping journey. Additionally, the website offers a straightforward login and signup process, further streamlining the user experience. In summary, Grocify's purpose is to revolutionize online grocery shopping, providing a hassle-free and enjoyable platform for users to meet their grocery needs. 
 <br /><br /><br />
-![Alt text](image.png)
+<img width="1898" height="946" alt="image" src="https://github.com/user-attachments/assets/60f267a1-6451-4946-80ff-312d034496be" />
+
 <br /><br /><br />
 Grocify is a cutting-edge online grocery website, meticulously crafted to offer users an exceptional and hassle-free shopping experience. The website employs a blend of HTML, CSS, JavaScript, and React to deliver a contemporary and responsive design that adapts seamlessly across various devices, ensuring accessibility for all users. 
 <br />
 The website's core components are designed with user convenience in mind: 
 Paymet Page
 <br />
-![Alt text](image-6.png)
+<img width="1920" height="944" alt="image-6" src="https://github.com/user-attachments/assets/a82fb79e-acf7-4537-aff4-da6a44073ea0" />
+
 <br /><br />
 Navigation Bar: A fixed navigation bar serves as the gateway to essential sections such as Home, Shop, Sign Up, and Cart. The Cart link features a real-time item count, allowing users to monitor their selections easily. 
 <br /><br />
