@@ -49,29 +49,35 @@ Landing Page: The landing page serves as the website's welcoming gateway, featur
 <br /><br />
 Categories: Grocify presents users with a range of product categories, simplifying the process of locating specific grocery items. 
 <br /><br />
-![Alt text](image-1.png)
+<img width="1900" height="946" alt="image-1" src="https://github.com/user-attachments/assets/397c2c63-dc1a-4f63-bbf0-73a40ab8aa7b" />
+
 <br /><br />
 Shop Items: Showcasing top products with images, names, prices, and quantity adjustment options, this component streamlines the process of adding items to the cart. 
 <br /><br />
-![Alt text](image-4.png)
+<img width="1901" height="942" alt="image-4" src="https://github.com/user-attachments/assets/ea318c2a-6244-47c1-9df0-4fa2a9abc189" />
+
 <br /><br />
 Shop Component: Equipped with advanced filtering and search functionality, this component empowers users to efficiently discover the items they desire. 
 <br /><br />
-![Alt text](image-2.png)
+<img width="1899" height="942" alt="image-2" src="https://github.com/user-attachments/assets/7e3d3ca7-82a0-4aa5-92cb-f48b4a414879" />
+
 <br /><br />
 Login/Sign Up: A user-friendly authentication process streamlines access to the platform, ensuring a seamless user experience. 
 <br /><br />
 Cart: Accessible via the navigation bar, the cart component enables users to view, modify, and complete their purchases with selected items. It provides a comprehensive list of cart items and guides users through the checkout process. 
 <br /><br />
-![Alt text](image-5.png)
+<img width="1901" height="945" alt="image-5" src="https://github.com/user-attachments/assets/f86c967a-2a0f-465f-aab1-b2de91e792c2" />
+
 <br /><br />
 About Us: The About Us page shares insights into the website's mission and offers additional relevant information.
 <br /><br />
-![Alt text](image-3.png)
+<img width="1897" height="943" alt="image-3" src="https://github.com/user-attachments/assets/e076fa00-06f6-4d33-8f52-65014662e2cf" />
+
 <br /><br />
 Grocify's primary aim is to provide users with an attractive, user-friendly, and responsive platform for online grocery shopping, enhancing their overall experience from product selection to final purchase. It aspires to be the go-to destination for users seeking a convenient and enjoyable online grocery shopping solution. 
 <br /><br />
-![Alt text](image-7.png)
+<img width="469" height="834" alt="image-7" src="https://github.com/user-attachments/assets/e6671506-3651-4b6c-a61b-7c79d85d3fa6" />
+
 <br /><br />
 The scope of Grocify, the online grocery website, covers a user-friendly and responsive platform for grocery shopping. Using HTML, CSS, JavaScript, and React, the website offers a modern interface with key components: a fixed navigation bar, landing page, product categories, shop items, About Us section, product filtering, login/sign-up, and a cart. The scope emphasizes efficient product selection, cart management, and user authentication, aiming to create a seamless and visually appealing online grocery shopping experience for users.
 <br /><br />
