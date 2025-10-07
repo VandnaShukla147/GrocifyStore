@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Button({ children, variant = "default", size = "default", className = "", ...props }) {
+export function Button({ children, variant = "default", size = "default", className = "", type = "button", ...props }) {
   const base =
     "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
@@ -23,7 +23,7 @@ export function Button({ children, variant = "default", size = "default", classN
   const classes = `${base} ${variants[variant] || variants.default} ${sizes[size] || sizes.default} ${className}`;
 
   return (
-    <button className={classes} {...props}>
+    <button type={type} className={classes} {...props}>
       {children}
     </button>
   );

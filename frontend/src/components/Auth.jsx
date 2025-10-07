@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { supabase } from "../integrations/supabase/client";
-
-
+import { UserContext } from "../Store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Chrome } from "lucide-react";
@@ -16,22 +15,25 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setLogin } = useContext(UserContext);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/products");
+        setLogin(true);
+        navigate("/"); // ✅ Redirect to Home if already logged in
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        navigate("/products");
+        setLogin(true);
+        navigate("/"); // ✅ Redirect to Home on login/signup
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, setLogin]);
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -44,13 +46,16 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
+        setLogin(true);
+        localStorage.setItem("user", email);
         toast.success("Welcome back!");
+        navigate("/"); // ✅ Go to Home after login
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/products`
+            emailRedirectTo: `${window.location.origin}/` // ✅ Redirect to Home
           }
         });
         if (error) throw error;
@@ -68,7 +73,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/products`
+          redirectTo: `${window.location.origin}/` // ✅ Redirect to Home
         }
       });
       if (error) throw error;
@@ -78,15 +83,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-6">
+    <div className="min-h-screen relative flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-white">
       {/* Animated background gradients */}
       <motion.div
         animate={{
           background: [
-            "radial-gradient(circle at 20% 50%, hsl(142 45% 45% / 0.3) 0%, transparent 50%)",
-            "radial-gradient(circle at 80% 50%, hsl(30 90% 60% / 0.3) 0%, transparent 50%)",
-            "radial-gradient(circle at 50% 80%, hsl(142 55% 55% / 0.3) 0%, transparent 50%)",
-            "radial-gradient(circle at 20% 50%, hsl(142 45% 45% / 0.3) 0%, transparent 50%)",
+            "radial-gradient(circle at 20% 50%, rgba(34,197,94,0.15) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 50%, rgba(249,115,22,0.15) 0%, transparent 50%)",
+            "radial-gradient(circle at 50% 80%, rgba(34,197,94,0.15) 0%, transparent 50%)",
+            "radial-gradient(circle at 20% 50%, rgba(34,197,94,0.15) 0%, transparent 50%)",
           ],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -100,20 +105,22 @@ const Auth = () => {
         className="w-full max-w-md relative z-10"
       >
         <div className="glass-card p-8 md:p-12">
+          {/* Heading */}
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">
+            <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">
               {isLogin ? "Welcome Back" : "Join Grocify"}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-gray-500">
               {isLogin ? "Sign in to continue shopping" : "Create your account today"}
             </p>
           </motion.div>
 
+          {/* Auth Form */}
           <AnimatePresence mode="wait">
             <motion.form
               key={isLogin ? "login" : "signup"}
@@ -124,7 +131,8 @@ const Auth = () => {
               onSubmit={handleEmailAuth}
               className="space-y-6"
             >
-              <div className="space-y-2">
+              {/* Email */}
+              <div className="space-y-2 text-left">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -133,11 +141,12 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-background/50"
+                  className="bg-white/70"
                 />
               </div>
 
-              <div className="space-y-2">
+              {/* Password */}
+              <div className="space-y-2 text-left">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -146,31 +155,34 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-background/50"
+                  className="bg-white/70"
                 />
               </div>
 
+              {/* Submit */}
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow"
                 disabled={loading}
               >
                 {loading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
 
+              {/* Divider */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
+                  <span className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-white px-2 text-gray-500">Or continue with</span>
                 </div>
               </div>
 
+              {/* Google */}
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                className="w-full border border-gray-300 hover:bg-gray-50 flex items-center justify-center"
                 onClick={handleGoogleAuth}
               >
                 <Chrome className="mr-2 h-4 w-4" />
@@ -179,6 +191,7 @@ const Auth = () => {
             </motion.form>
           </AnimatePresence>
 
+          {/* Switch Auth */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -187,7 +200,7 @@ const Auth = () => {
           >
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm text-gray-500 hover:text-green-600 transition-colors"
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>

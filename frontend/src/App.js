@@ -24,25 +24,27 @@ function App() {
   const [searchList,setsearchList]=useState(set)
   const [SearchcartList,setSearchcartList]=useState([])
   const [cartDetail,setCartDetail]=useState({"subcost":0,"discount":0,"tax":0,"total":0});
+  
   useEffect(()=>{
     let user=localStorage.getItem("user")
     if(user){
       setLogin(true)
     }
   },[])
+  
   return (
     <> 
-    <UserContext.Provider  value={{cartList,setcartList,cartDetail,setCartDetail,hash,setHash,searchList,setsearchList,SearchcartList,setSearchcartList,login:login,setLogin:setLogin}}>
+    <UserContext.Provider value={{cartList,setcartList,cartDetail,setCartDetail,hash,setHash,searchList,setsearchList,SearchcartList,setSearchcartList,login:login,setLogin:setLogin}}>
       <BrowserRouter>
         <NavBar></NavBar>
         <Routes>
-          <Route path='/' element={<Home ></Home>} />
-          <Route path='/Shop' element={<Shop></Shop>} />
-          <Route path='/Cart' element={<Cart></Cart>} />
-          <Route path='/Auth' element={<Auth></Auth>} />
-          <Route path='/SignUp' element={<Auth></Auth>} />
-          <Route path='/Login' element={<Auth></Auth>} />
-          <Route path='/Payment' element={<Payment></Payment>} />
+          <Route path='/' element={<Home />} />
+          <Route path='/Shop' element={<Shop />} />
+          <Route path='/Cart' element={<Cart />} />
+          <Route path='/Auth' element={<Auth />} />
+          <Route path='/SignUp' element={<Auth />} />
+          <Route path='/Login' element={<Auth />} />
+          <Route path='/Payment' element={<Payment />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
