@@ -11,8 +11,7 @@ import './App.css'
 import { UserContext } from './Store';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Cart from './components/Cart';
-import Login from './components/Auth';
-import SignUp from './components/Auth';
+import Auth from './components/Auth';
 import Payment from './components/Payment';
 import { useEffect, useState } from 'react';
 
@@ -40,6 +39,8 @@ function App() {
           <Route path='/' element={<Home ></Home>} />
           <Route path='/Shop' element={<Shop></Shop>} />
           <Route path='/Cart' element={<Cart></Cart>} />
+          <Route path='/Auth' element={<Auth></Auth>} />
+          <Route path='/SignUp' element={<Auth></Auth>} />
           <Route path='/Login' element={<Auth></Auth>} />
           <Route path='/Payment' element={<Payment></Payment>} />
         </Routes>

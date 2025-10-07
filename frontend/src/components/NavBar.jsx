@@ -120,7 +120,7 @@ export default function NavBar() {
                         )}
                     </li>
                 ) : (
-                    <li><Link to="/SignUp" className='signUp'>sign up</Link></li>
+                    <li><Link to="/Auth" className='signUp'>Sign Up / Login</Link></li>
                 )}
             </ul>
             <ul className='CartSmall' >
@@ -175,7 +175,7 @@ export default function NavBar() {
                             )}
                         </li>
                     ) : (
-                        <li><Link to="/SignUp" className='signUp'>sign up</Link></li>
+                        <li><Link to="/Auth" className='signUp'>Sign Up / Login</Link></li>
                     )}
                 </ul>
             </motion.nav>
