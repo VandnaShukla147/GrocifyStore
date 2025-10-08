@@ -262,8 +262,13 @@ export default function Shop() {
             </div>
             <div className='ShopPage'>
 
-                <div className="ShopPageSecondSection">
-                    <Product Margin={{ "margin": "20px" }} type="Shop" ></Product>
+                    <div className="ShopPageSecondSection">
+                        <Product 
+    Margin={{ margin: "20px" }} 
+    type="Shop" 
+    searchQuery={search}   
+    />
+
                 </div>
             </div>
         </div>

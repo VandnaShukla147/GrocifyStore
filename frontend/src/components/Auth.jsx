@@ -15,25 +15,31 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setLogin } = useContext(UserContext);
+  const { setLogin, setUser } = useContext(UserContext);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setLogin(true);
-        navigate("/"); // ✅ Redirect to Home if already logged in
+        setUser(session.user);
+        localStorage.setItem("user", JSON.stringify(session.user));
+        navigate("/"); // redirect to Home
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setLogin(true);
-        navigate("/"); // ✅ Redirect to Home on login/signup
+        setUser(session.user);
+        localStorage.setItem("user", JSON.stringify(session.user));
+        navigate("/");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, setLogin]);
+  }, [navigate, setLogin, setUser]);
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -41,24 +47,26 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
         setLogin(true);
-        localStorage.setItem("user", email);
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Welcome back!");
-        navigate("/"); // ✅ Go to Home after login
+        navigate("/");
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/` // ✅ Redirect to Home
-          }
+            emailRedirectTo: `${window.location.origin}/`,
+          },
         });
         if (error) throw error;
+        setUser(data.user);
         toast.success("Account created! Please check your email.");
       }
     } catch (error) {
@@ -70,13 +78,14 @@ const Auth = () => {
 
   const handleGoogleAuth = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/` // ✅ Redirect to Home
-        }
+          redirectTo: `${window.location.origin}/`,
+        },
       });
       if (error) throw error;
+      setUser(data.user);
     } catch (error) {
       toast.error(error.message || "Failed to sign in with Google");
     }
@@ -116,7 +125,9 @@ const Auth = () => {
               {isLogin ? "Welcome Back" : "Join Grocify"}
             </h1>
             <p className="text-gray-500">
-              {isLogin ? "Sign in to continue shopping" : "Create your account today"}
+              {isLogin
+                ? "Sign in to continue shopping"
+                : "Create your account today"}
             </p>
           </motion.div>
 
@@ -165,7 +176,11 @@ const Auth = () => {
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow"
                 disabled={loading}
               >
-                {loading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
+                {loading
+                  ? "Loading..."
+                  : isLogin
+                  ? "Sign In"
+                  : "Create Account"}
               </Button>
 
               {/* Divider */}
@@ -174,7 +189,9 @@ const Auth = () => {
                   <span className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                  <span className="bg-white px-2 text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
@@ -202,7 +219,9 @@ const Auth = () => {
               onClick={() => setIsLogin(!isLogin)}
               className="text-sm text-gray-500 hover:text-green-600 transition-colors"
             >
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+              {isLogin
+                ? "Don't have an account? Sign up"
+                : "Already have an account? Sign in"}
             </button>
           </motion.div>
         </div>
