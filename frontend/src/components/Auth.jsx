@@ -1,13 +1,16 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { supabase } from "../integrations/supabase/client";
 import { UserContext } from "../Store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Chrome } from "lucide-react";
+import axios from "axios";
+
+const API_URL = "http://localhost:4000/api/auth";
+
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,78 +20,53 @@ const Auth = () => {
   const navigate = useNavigate();
   const { setLogin, setUser } = useContext(UserContext);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setLogin(true);
-        setUser(session.user);
-        localStorage.setItem("user", JSON.stringify(session.user));
-        navigate("/"); // redirect to Home
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setLogin(true);
-        setUser(session.user);
-        localStorage.setItem("user", JSON.stringify(session.user));
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, setLogin, setUser]);
-
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (isLogin) {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // LOGIN
+        const { data } = await axios.post(`${API_URL}/login`, {
           email,
           password,
         });
-        if (error) throw error;
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
         setLogin(true);
         setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
+
         toast.success("Welcome back!");
         navigate("/");
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        // SIGNUP
+        const { data } = await axios.post(`${API_URL}/signup`, {
           email,
           password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-          },
         });
-        if (error) throw error;
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        setLogin(true);
         setUser(data.user);
-        toast.success("Account created! Please check your email.");
+
+        toast.success("Account created!");
+        navigate("/");
       }
     } catch (error) {
-      toast.error(error.message || "An error occurred");
+      toast.error(
+        error.response?.data?.message || "Authentication failed"
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleAuth = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
-      if (error) throw error;
-      setUser(data.user);
-    } catch (error) {
-      toast.error(error.message || "Failed to sign in with Google");
-    }
+  const handleGoogleAuth = () => {
+    toast.error("Google login not implemented with MongoDB yet");
   };
 
   return (
