@@ -11,7 +11,7 @@ import Shop from './components/Shop';
 import Cart from './components/Cart';
 import Auth from './components/Auth';
 import Payment from './components/Payment';
-import Footer from './components/Footer';   // ✅ Import Footer
+import Footer from './components/Footer';
 
 import { UserContext } from './Store';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -23,14 +23,25 @@ function App() {
   let set = new Set();
   set.add("All");
   const [login, setLogin] = useState(false);
+  const [user, setUser] = useState(null);
   const [searchList, setsearchList] = useState(set);
   const [SearchcartList, setSearchcartList] = useState([]);
   const [cartDetail, setCartDetail] = useState({ "subcost": 0, "discount": 0, "tax": 0, "total": 0 });
 
   useEffect(() => {
-    let user = localStorage.getItem("user");
-    if (user) {
-      setLogin(true);
+    let storedUser = localStorage.getItem("user");
+    let token = localStorage.getItem("token");
+    
+    if (storedUser && token) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setLogin(true);
+      } catch (err) {
+        console.error("Error parsing user data:", err);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
     }
   }, []);
 
@@ -42,7 +53,10 @@ function App() {
         hash, setHash,
         searchList, setsearchList,
         SearchcartList, setSearchcartList,
-        login: login, setLogin: setLogin
+        login: login, 
+        setLogin: setLogin,
+        user: user,
+        setUser: setUser
       }}>
         <BrowserRouter>
           <NavBar />
@@ -55,7 +69,7 @@ function App() {
             <Route path='/Login' element={<Auth />} />
             <Route path='/Payment' element={<Payment />} />
           </Routes>
-          <Footer />   {/* ✅ Footer always at the bottom */}
+          <Footer />
         </BrowserRouter>
       </UserContext.Provider>
     </>

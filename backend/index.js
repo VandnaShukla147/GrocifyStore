@@ -15,9 +15,43 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/products", require("./routes/productRoutes"));
+app.use("/api/cart", require("./routes/cartRoutes"));
+
+// Legacy routes for backward compatibility
+app.get("/products", async (req, res) => {
+  const Product = require("./models/product.model");
+  try {
+    const products = await Product.find();
+    res.json({ status: true, products });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post("/getProducts", async (req, res) => {
+  const Product = require("./models/product.model");
+  try {
+    const { all, search, category } = req.body;
+    let query = {};
+    
+    if (!all) {
+      if (category && category.length > 0) {
+        query.category = { $in: category.map(c => c.toLowerCase()) };
+      }
+      if (search && search.length > 0) {
+        query.name = { $regex: search, $options: 'i' };
+      }
+    }
+    
+    const products = await Product.find(query);
+    res.json({ status: true, products });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Error handler
 app.use(errorHandler);
