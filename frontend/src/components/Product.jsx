@@ -11,7 +11,7 @@ export default function Product(props) {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:4000/products", {
+    fetch("http://localhost:4000/api/products", {
       method: "GET",
       credentials: "include"
     })

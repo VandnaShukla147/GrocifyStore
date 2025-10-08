@@ -1,6 +1,6 @@
 const express = require("express");
 const { 
-  getAllProducts, 
+  getProducts, 
   searchProducts, 
   createProduct, 
   updateProduct, 
@@ -9,7 +9,7 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/", getAllProducts);
+router.get("/", getProducts);
 router.post("/search", searchProducts);
 router.post("/", protect, createProduct);
 router.put("/:id", protect, updateProduct);
