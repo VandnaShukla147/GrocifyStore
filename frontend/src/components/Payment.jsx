@@ -24,7 +24,7 @@ export default function Payment() {
     };
 
     // Simulate backend payment call
-    fetch("http://localhost:4000/payment", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -49,15 +49,14 @@ export default function Shop() {
       };
     }
 
-    try {
-      const res = await fetch("http://localhost:4000/api/products/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(option),
-        
-      });
+    try {const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/search`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(option),
+});
+
 
       const data = await res.json();
       console.log("API Response:", data);

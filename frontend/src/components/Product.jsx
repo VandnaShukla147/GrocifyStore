@@ -11,9 +11,10 @@ export default function Product(props) {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:4000/api/products/", {
-      method: "GET", 
-    })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/`, {
+  method: "GET",
+})
+
       .then(async (res) => {
         const data = await res.json();
         if (data.status && data.products && data.products.length > 0) {

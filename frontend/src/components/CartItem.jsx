@@ -111,7 +111,7 @@ export default function CartItem(props) {
         const user = localStorage.getItem('user');
         if (!itemId || !user) return;
         const token = JSON.parse(user).token;
-        fetch(`http://localhost:4000/api/cart/${itemId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/cart/${itemId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

@@ -9,7 +9,8 @@ import { toast } from "sonner";
 import { Chrome } from "lucide-react";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/auth";
+const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api/auth`;
+
 
 
 const Auth = () => {
