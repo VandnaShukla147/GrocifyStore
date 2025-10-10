@@ -9,9 +9,9 @@
 2. Create a `.env` file in the backend root with:
    ```env
    PORT=4000
-   MONGODB_URI=mongodb://localhost:27017/grocery
-   JWT_SECRET=your_jwt_secret
-   CORS_ORIGIN=http://localhost:3000
+   MONGO_URI=mongodb+srv://shuklavandna56_db_user:123456VANDNA@grocifycluster.daqsxqa.mongodb.net/grocify?retryWrites=true&w=majority&appName=GrocifyCluster
+JWT_SECRET=supersecretkey123
+   FRONTEND_URL=https://grocify-store-navy.vercel.app
    ```
 3. Start the server:
    ```bash
