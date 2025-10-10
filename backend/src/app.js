@@ -7,7 +7,7 @@ import { errorHandler } from './middlewares/error.js';
 const app = express();
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL,'http://localhost:3000', 'http://localhost:5173'], // your React dev URLs
+  origin: process.env.FRONTEND_URL, // your React dev URLs
   credentials: true
 }));
 console.log("✅ CORS allowed origin:", process.env.FRONTEND_URL);
