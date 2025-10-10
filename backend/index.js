@@ -1,8 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const connectDB = require("./config/db");
-const { errorHandler } = require("./middleware/errorHandler");
+const connectDB = require("./src/config/db");
+const { errorHandler } = require("./src/middleware/errorHandler");
 
 dotenv.config();
 connectDB();
@@ -16,9 +16,9 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/products", require("./routes/productRoutes"));
-app.use("/api/cart", require("./routes/cartRoutes"));
+app.use("/api/auth", require("./src/routes/authRoutes"));
+app.use("/api/products", require("./src/routes/productRoutes"));
+app.use("/api/cart", require("./src/routes/cartRoutes"));
 
 // Legacy routes for backward compatibility
 app.get("/products", async (req, res) => {

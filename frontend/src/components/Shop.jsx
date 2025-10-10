@@ -56,7 +56,7 @@ export default function Shop() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(option),
-        credentials: "include", // ✅ send cookies/JWT tokens
+        
       });
 
       const data = await res.json();

@@ -11,9 +11,8 @@ export default function Product(props) {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:4000/api/products", {
-      method: "GET",
-      credentials: "include"
+    fetch("http://localhost:4000/api/products/", {
+      method: "GET", 
     })
       .then(async (res) => {
         const data = await res.json();
