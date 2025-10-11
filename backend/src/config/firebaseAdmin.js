@@ -1,14 +1,11 @@
-const admin = require("firebase-admin");
-const path = require("path");
+import admin from "firebase-admin";
 
-// ✅ Load service account key
-const serviceAccount = require(path.join(__dirname, "../../serviceAccountKey.json"));
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-// ✅ Initialize only once
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
 }
 
-module.exports = admin;
+export default admin;
