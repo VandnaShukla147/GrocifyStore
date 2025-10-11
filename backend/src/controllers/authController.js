@@ -1,8 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
-const admin = require("../config/firebaseAdmin");
-
+const { adminAuth } = require("../config/firebaseAdmin"); // ✅ updated import
 
 // 📌 Email/Password Signup
 exports.signupUser = async (req, res) => {
@@ -64,25 +63,31 @@ exports.loginUser = async (req, res) => {
 // 📌 Google Authentication using Firebase Admin
 exports.googleAuth = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, mode } = req.body;
     if (!token) return res.status(400).json({ message: "Missing token" });
 
     // ✅ Verify the Google ID token with Firebase Admin SDK
-    const decoded = await admin.auth().verifyIdToken(token);
-
+    const decoded = await adminAuth.verifyIdToken(token);
     const email = decoded.email;
     const name = decoded.name || email.split("@")[0];
     const picture = decoded.picture;
 
     let user = await User.findOne({ email });
 
-    // If no user exists, create one
-    if (!user) {
+    // ✅ Handle signup or signin modes explicitly
+    if (mode === "signup") {
+      if (user) {
+        return res.status(400).json({ message: "User already exists" });
+      }
       user = await User.create({
         name,
         email,
-        password: "google_oauth", // placeholder
+        password: "google_oauth",
       });
+    }
+
+    if (mode === "signin" && !user) {
+      return res.status(404).json({ message: "No account found for this email" });
     }
 
     const jwtToken = generateToken(user._id);
