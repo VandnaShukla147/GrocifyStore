@@ -6,19 +6,15 @@ import { errorHandler } from './middlewares/error.js';
 
 const app = express();
 
-// ✅ Allow localhost and production
+// ✅ Load allowed origins from environment variables
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://grocify-store-navy.vercel.app'
-];
+  process.env.FRONTEND_URL // e.g. https://grocify-store-navy.vercel.app
+].filter(Boolean); // remove any undefined
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = [
-        'http://localhost:3000',
-        'https://grocify-store-navy.vercel.app',
-      ];
       if (!origin || allowedOrigins.includes(origin)) {
         console.log(`✅ CORS enabled for ${origin}`);
         callback(null, true);
@@ -30,9 +26,6 @@ app.use(
     credentials: true,
   })
 );
-
-
-console.log('✅ CORS allowed origins:', allowedOrigins);
 
 app.use(express.json());
 app.use(morgan('dev'));

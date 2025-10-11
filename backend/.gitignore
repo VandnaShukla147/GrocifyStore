@@ -40,3 +40,4 @@ pnpm-debug.log*
 
 # typescript build info
 *.tsbuildinfo
+serviceAccountKey.json

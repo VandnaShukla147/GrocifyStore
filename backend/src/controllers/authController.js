@@ -1,8 +1,10 @@
-// backend/src/controllers/authController.js
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
+const admin = require("../config/firebaseAdmin");
 
+
+// 📌 Email/Password Signup
 exports.signupUser = async (req, res) => {
   try {
     console.log("📥 Signup request body:", req.body);
@@ -20,14 +22,14 @@ exports.signupUser = async (req, res) => {
     user = await User.create({
       name: name || email.split("@")[0],
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     const token = generateToken(user._id);
     res.status(201).json({
       status: true,
       user: { id: user._id, email: user.email, name: user.name },
-      token
+      token,
     });
   } catch (err) {
     console.error("❌ Signup error:", err);
@@ -35,6 +37,7 @@ exports.signupUser = async (req, res) => {
   }
 };
 
+// 📌 Email/Password Login
 exports.loginUser = async (req, res) => {
   try {
     console.log("📥 Login request body:", req.body);
@@ -50,37 +53,35 @@ exports.loginUser = async (req, res) => {
     res.json({
       status: true,
       user: { id: user._id, email: user.email, name: user.name },
-      token
+      token,
     });
   } catch (err) {
     console.error("❌ Login error:", err);
     res.status(500).json({ message: err.message });
   }
 };
-const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// 📌 Google Authentication using Firebase Admin
 exports.googleAuth = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) return res.status(400).json({ message: "Missing token" });
 
-    // Verify the token with Google
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    // ✅ Verify the Google ID token with Firebase Admin SDK
+    const decoded = await admin.auth().verifyIdToken(token);
 
-    const { email, name, picture } = ticket.getPayload();
+    const email = decoded.email;
+    const name = decoded.name || email.split("@")[0];
+    const picture = decoded.picture;
 
     let user = await User.findOne({ email });
 
     // If no user exists, create one
     if (!user) {
       user = await User.create({
-        name: name || email.split("@")[0],
+        name,
         email,
-        password: "google_oauth" // placeholder password
+        password: "google_oauth", // placeholder
       });
     }
 
@@ -88,7 +89,7 @@ exports.googleAuth = async (req, res) => {
     res.json({
       status: true,
       user: { id: user._id, email: user.email, name: user.name, picture },
-      token: jwtToken
+      token: jwtToken,
     });
 
   } catch (err) {
@@ -96,4 +97,3 @@ exports.googleAuth = async (req, res) => {
     res.status(500).json({ message: "Google login failed" });
   }
 };
-

@@ -8,11 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Chrome } from "lucide-react";
 import axios from "axios";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../firebase";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firebase";
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
-
+const API_URL = `${process.env.REACT_APP_BACKEND_URL || "http://localhost:4000"}/api/auth`;
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +21,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { setLogin, setUser } = useContext(UserContext);
 
-  // EMAIL/PASSWORD SIGNUP & LOGIN
+  // 📌 Email/Password Auth
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -44,31 +43,31 @@ const Auth = () => {
     }
   };
 
-  // GOOGLE AUTH
+  // 📌 Google Auth
   const handleGoogleAuth = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      // Use shared provider with forced account chooser
+      const result = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
+      const mode = isLogin ? "signin" : "signup";
 
-      const { data } = await axios.post(`${API_URL}/google`, { token: idToken });
+      const { data } = await axios.post(`${API_URL}/google`, { token: idToken, mode });
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setLogin(true);
       setUser(data.user);
 
-      toast.success("Signed in with Google!");
+      toast.success(mode === "signin" ? "Signed in with Google!" : "Account created with Google!");
       navigate("/");
     } catch (error) {
       console.error("Google login error:", error);
-      toast.error("Google login failed");
+      toast.error(error.response?.data?.message || "Google login failed");
     }
   };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-white">
-      {/* Animated background gradients */}
       <motion.div
         animate={{
           background: [
@@ -89,7 +88,6 @@ const Auth = () => {
         className="w-full max-w-md relative z-10"
       >
         <div className="glass-card p-8 md:p-12">
-          {/* Heading */}
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -106,7 +104,6 @@ const Auth = () => {
             </p>
           </motion.div>
 
-          {/* Auth Form */}
           <AnimatePresence mode="wait">
             <motion.form
               key={isLogin ? "login" : "signup"}
@@ -183,7 +180,6 @@ const Auth = () => {
             </motion.form>
           </AnimatePresence>
 
-          {/* Switch Auth */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
