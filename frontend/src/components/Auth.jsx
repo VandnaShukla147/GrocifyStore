@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Chrome } from "lucide-react";
 import axios from "axios";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../firebase";
 
-const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api/auth`;
-
+const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
 
 
 const Auth = () => {
@@ -21,53 +22,48 @@ const Auth = () => {
   const navigate = useNavigate();
   const { setLogin, setUser } = useContext(UserContext);
 
+  // EMAIL/PASSWORD SIGNUP & LOGIN
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      if (isLogin) {
-        // LOGIN
-        const { data } = await axios.post(`${API_URL}/login`, {
-          email,
-          password,
-        });
+      const endpoint = isLogin ? "login" : "signup";
+      const { data } = await axios.post(`${API_URL}/${endpoint}`, { email, password });
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setLogin(true);
+      setUser(data.user);
 
-        setLogin(true);
-        setUser(data.user);
-
-        toast.success("Welcome back!");
-        navigate("/");
-      } else {
-        // SIGNUP
-        const { data } = await axios.post(`${API_URL}/signup`, {
-          email,
-          password,
-        });
-
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        setLogin(true);
-        setUser(data.user);
-
-        toast.success("Account created!");
-        navigate("/");
-      }
+      toast.success(isLogin ? "Welcome back!" : "Account created!");
+      navigate("/");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Authentication failed"
-      );
+      toast.error(error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleAuth = () => {
-    toast.error("Google login not implemented with MongoDB yet");
+  // GOOGLE AUTH
+  const handleGoogleAuth = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+
+      const { data } = await axios.post(`${API_URL}/google`, { token: idToken });
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setLogin(true);
+      setUser(data.user);
+
+      toast.success("Signed in with Google!");
+      navigate("/");
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google login failed");
+    }
   };
 
   return (

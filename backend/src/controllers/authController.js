@@ -57,3 +57,43 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleAuth = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: "Missing token" });
+
+    // Verify the token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { email, name, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    // If no user exists, create one
+    if (!user) {
+      user = await User.create({
+        name: name || email.split("@")[0],
+        email,
+        password: "google_oauth" // placeholder password
+      });
+    }
+
+    const jwtToken = generateToken(user._id);
+    res.json({
+      status: true,
+      user: { id: user._id, email: user.email, name: user.name, picture },
+      token: jwtToken
+    });
+
+  } catch (err) {
+    console.error("❌ Google Auth error:", err);
+    res.status(500).json({ message: "Google login failed" });
+  }
+};
+

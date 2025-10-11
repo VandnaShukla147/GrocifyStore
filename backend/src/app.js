@@ -6,18 +6,37 @@ import { errorHandler } from './middlewares/error.js';
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL, // your React dev URLs
-  credentials: true
-}));
-console.log("✅ CORS allowed origin:", process.env.FRONTEND_URL);
+// ✅ Allow localhost and production
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://grocify-store-navy.vercel.app'
+];
 
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        'https://grocify-store-navy.vercel.app',
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        console.log(`✅ CORS enabled for ${origin}`);
+        callback(null, true);
+      } else {
+        console.log(`❌ CORS blocked for ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
+
+console.log('✅ CORS allowed origins:', allowedOrigins);
 
 app.use(express.json());
 app.use(morgan('dev'));
-
 app.use('/api', routes);
-
 app.use(errorHandler);
 
-export default app; 
+export default app;
